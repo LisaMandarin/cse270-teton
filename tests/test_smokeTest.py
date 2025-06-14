@@ -9,10 +9,12 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
+from selenium.webdriver.chrome.options import Options
 class TestSmokeTest():
   def setup_method(self, method):
-    self.driver = webdriver.Firefox()
+    options = Options()
+    options.add_argument("--headless=new")
+    self.driver = webdriver.Chrome(options=options)
     self.vars = {}
   
   def teardown_method(self, method):
@@ -66,8 +68,7 @@ class TestSmokeTest():
     self.driver.find_element(By.NAME, "bizname").send_keys("business name")
     self.driver.find_element(By.NAME, "biztitle").send_keys("title")
     self.driver.find_element(By.NAME, "submit").click()
-    elements = self.driver.find_elements(By.NAME, "email")
-    assert len(elements) > 0
+    WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.NAME, "email")))
   
   def test_test5(self):
     self.driver.get("http://127.0.0.1:5500/teton/1.6/index.html")
